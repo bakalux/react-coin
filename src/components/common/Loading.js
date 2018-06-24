@@ -8,13 +8,13 @@ const Loading = props => {
 };
 
 Loading.defaultProps = {
-  width: '28px', 
-  height: '28px'
+  width: "28px",
+  height: "28px"
 };
 
 Loading.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string
-}
+};
 
 export default Loading;

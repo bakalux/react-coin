@@ -7,12 +7,11 @@ import Search from "./Search";
 const Header = () => {
   return (
     <div className="Header">
-    <Link to="/">
-      <img src={logo} alt="logo" className="Header-logo" />
-    </Link>
-    <Search/>
+      <Link to="/">
+        <img src={logo} alt="logo" className="Header-logo" />
+      </Link>
+      <Search />
     </div>
-   
   );
 };
 
