@@ -1,11 +1,17 @@
-import React from "react";
+// Separate libraries, library components, project components, helper functions, styles with a linebreak
+// Alpahbetize
+import React, { Component } from "react";
+
 import { withRouter } from "react-router-dom";
+
 import Loading from "./Loading";
+
 import { API_URL } from "../../config";
 import { handleResponse } from "../../helpers";
+
 import "./Search.css";
 
-class Search extends React.Component {
+class Search extends Component {
   constructor() {
     super();
     this.state = {
@@ -13,33 +19,36 @@ class Search extends React.Component {
       searchQuery: "",
       loading: false
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleRedirect = this.handleRedirect.bind(this);
   }
 
-  handleChange(event) {
+  //Alphabetize functions
+  // Replace binding context with arrow function
+  handleChange = event => {
+    // Handle fetching data in a separate function
+    const fetchData = async (url, searchQuery) => {
+      this.setState({ loading: true });
+      //Replace promises with async/await syntax
+      const response = await fetch(`${url}autocomplete?searchQuery=${searchQuery}`);
+      const result = await handleResponse(response);
+      this.setState({
+        loading: false,
+        searchResults: result
+      });
+    }
+
     const searchQuery = event.target.value;
 
     this.setState({ searchQuery });
     //If searchQuery isn't present, don't send request to server
-    if (!searchQuery) {
-      return "";
+    if (!searchQuery.trim()) {
+      return '';
+    } else {
+      fetchData(API_URL, searchQuery);
     }
-
-    this.setState({ loading: true });
-
-    fetch(`${API_URL}autocomplete?searchQuery=${searchQuery}`)
-      .then(handleResponse)
-      .then(result => {
-        this.setState({
-          loading: false,
-          searchResults: result
-        });
-      });
   }
 
-  handleRedirect(currencyId) {
+  // Replace binding context with arrow functions
+  handleRedirect = currencyId => {
     //Clear input value and close autocomplete container,
     //By clearing searchQuery state
     this.setState({
@@ -60,15 +69,19 @@ class Search extends React.Component {
     if (searchResults.length > 0) {
       return (
         <div className="Search-result-container">
-          {searchResults.map(result => (
-            <div
-              key={result.id}
-              className="Search-result"
-              onClick={() => this.handleRedirect(result.id)}
-            >
-              {result.name} ({result.symbol})
-            </div>
-          ))}
+          {
+            // Destructuring the result object
+            searchResults.map(({ id, name, symbol }) => (
+              //first prop on a first line
+              //aplhabetize props
+              <div className="Search-result"
+                key={ id }
+                onClick={ () => this.handleRedirect(id) }
+              >
+                { name } ({ symbol })
+              </div>
+            ))
+          }
         </div>
       );
     }
@@ -86,21 +99,25 @@ class Search extends React.Component {
   render() {
     const { loading, searchQuery } = this.state;
     return (
+      //first prop on a first line
+      //aplhabetize props
       <div className="Search">
         <span className="Search-icon" />
-        <input
-          className="Search-input"
-          type="text"
+        <input className="Search-input"
+          onChange={ this.handleChange }
           placeholder="Currency name"
-          onChange={this.handleChange}
-          value={searchQuery}
+          type="text"
+          value={ searchQuery }
         />
-        {loading && (
+        {
+          loading &&
           <div className="Search-loading">
-            <Loading width="12px" height="12px" />
+            <Loading height="12px"
+              width="12px"
+            />
           </div>
-        )}
-        {this.renderSearchResults()}
+        }
+        { this.renderSearchResults() }
       </div>
     );
   }
